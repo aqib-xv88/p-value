@@ -1,0 +1,48 @@
+from numpy import mean
+from scipy.stats import sem
+from scipy.stats import t
+
+# Table 1
+# Sample Data
+# In the sample Data mean and standard deviation values have been calculated from 3 samples. n = 3;
+# c matrix contains mean values
+c=[[86.13, 83.34, 76.42],[0.52, 0.23, 0.36],[10,13,21],[9.02,12.8,20],
+  [4.2, 4.16, 6.68],[4.6, 3.9, 4.0],[0.19, 0.18, 0.14],[30, 20, 20]]
+  
+# d matrix contains standard deviation values
+d=[[0.07, 0.03, 0.02],[0.08,0.02,0.03],[0.04,0.02,0.03],[0.51,0.31,0.23],
+  [0.14, 0.18, 0.26],[0.02, 0.03, 0.01],[0.08, 0.05, 0.06],[0.09,0.07,0.05]]
+
+# Sample Data has total 8 groups and 3 samples in each group; 3 samples such as Sample-I, Sample-II, Sample-III. n=3 because, Sample-I 
+# mean and SD have been calculated taking 3 samples of Sample-I and similarly for Sample-II and Sample-III.
+
+
+alpha = 0.05 # Significance level
+
+# Following code calculates p values between each 2 samples (i.e. Sample-I, Sample-II) in each Group
+for k in range(len(c)):
+    print(k+1) # prints number of group
+    for i in range(len(c[0])):
+        for j in range(i+1,len(c[0])):
+            
+            # Following code is to reconstruct actual 3 samples used to calculate mean and SD for each sample.
+            # In case of different n, data1, data2 values will change. 
+            
+            data1 = [c[k][i]-d[k][i],c[k][i],c[k][i]+d[k][i]]    # data1 contains sample - I; 3 values.
+            data2 = [c[k][j]-d[k][j],c[k][j],c[k][j]+d[k][j]]    # data2 contains sample - II; 3 values. 
+            
+            mean1, mean2 = mean(data1), mean(data2)
+            se1, se2 = sem(data1), sem(data2)
+            
+            sed = sqrt(se1**2.0 + se2**2.0)
+            t_stat = (mean1 - mean2) / sed
+            
+            df = 2 # most conservative estimate ( n-1 )
+            
+            p = (1.0 - t.cdf(abs(t_stat), df)) * 2.0 #scipy.stats cdf
+            
+            if p > alpha:        
+                    print('i = ',i+1,'j = ',j+1,'p = ',p,'Samples are not significantly different (P>0.05)')
+            else:
+                print('i = ',i+1,'j = ',j+1,'p = ',p,'Samples are Significantly different (P<0.05)')
+        
