@@ -1,6 +1,7 @@
 from numpy import mean
 from scipy.stats import sem
 from scipy.stats import t
+from math import sqrt
 
 # Table 1
 # Sample Data
